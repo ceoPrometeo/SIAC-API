@@ -9,15 +9,23 @@ import java.util.List;
 public class AsesorDto {
 
     private Long id;
-    @NotBlank(message = "Es necesario que coloques un nunero de cuenta MT5 para continuar")
+    @NotBlank(message = "Es necesario que coloques un numero de cuenta MT5 para continuar")
     private String cuentaMt5;
+    @NotBlank(message = "Es necesario que coloques un nombre para continuar")
     private String nombre;
+    @NotBlank(message = "Es necesario que coloques un monto para continuar")
     private Double monto;
+    @NotBlank(message = "Es necesario que coloques un estado para continuar")
     private boolean estado;
+    @NotBlank(message = "Es necesario que coloques un correo para continuar")
     private String correo;
+    @NotBlank(message = "Es necesario que coloques un telefono para continuar")
     private String telefono;
+    @NotBlank(message = "Es necesario que coloques una fecha de contrato para continuar")
     private Date fechaContrato;
+    @NotBlank(message = "Es necesario que coloques una contraseña para continuar")
     private String password;
+    @NotBlank(message = "El setteo del rol ha fallado")
     private List<Roles> rol;
 
     //GET Y SETS

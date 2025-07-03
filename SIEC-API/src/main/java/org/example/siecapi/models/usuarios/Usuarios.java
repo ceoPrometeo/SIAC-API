@@ -27,6 +27,7 @@ public class Usuarios {
     private boolean estado;
     @Column(name = "Fecha_Contrato", nullable = false)
     private Date fechaContrato;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "Usuarios_Roles", // tabla intermedia
