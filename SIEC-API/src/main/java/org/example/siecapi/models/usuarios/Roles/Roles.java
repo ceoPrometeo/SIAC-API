@@ -10,6 +10,10 @@ public class Roles {
     private int id;
     private String rol;
 
+    public void roles (String rol){
+        this.rol = rol;
+    }
+
     public int getId() {
         return id;
     }

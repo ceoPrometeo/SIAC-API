@@ -1,30 +1,41 @@
-package org.example.siecapi.models.usuarios;
+package org.example.siecapi.models.cliente;
 
 import jakarta.persistence.*;
-import org.example.siecapi.models.cliente.Cliente;
+import org.example.siecapi.models.cateras.Cartera;
+import org.example.siecapi.models.contratos.Contratos;
 import org.example.siecapi.models.usuarios.Roles.Roles;
+import org.example.siecapi.models.usuarios.Usuarios;
 
-import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "Usuarios")
-public class Usuarios {
-
+@Table(name = "Cliente")
+public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "Nombre", nullable = true, length = 100)
     private String nombre;
-    @Column(name = "Correo", nullable = false, length = 40)
+    @Column(name = "Correo", nullable = true, length = 40)
     private String correo;
     @Column(name = "Telefono", nullable = true, length = 10)
     private String telefono;
     @Column(name = "Estado", nullable = true)
     private boolean estado;
-    @OneToMany
-    @JoinColumn(name = "clientes")
-    private List<Cliente> clientes;
+    @ManyToOne
+    @JoinColumn(name = "asesor")
+    private Usuarios asesor;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "contratos_cliente", // tabla intermedia
+            joinColumns = @JoinColumn(name = "cliente_id"),
+            inverseJoinColumns = @JoinColumn(name = "contrato_id")
+    )
+    private List<Contratos> contratos;
+
+    @ManyToOne
+    @JoinColumn(name = "cartera")
+    private Cartera cartera;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -33,20 +44,6 @@ public class Usuarios {
             inverseJoinColumns = @JoinColumn(name = "rol_id")
     )
     private List<Roles> rol;
-    @Column(name = "Password", nullable = false)
-    private String password;
-
-
-    //Getters y setters
-
-
-    public List<Cliente> getClientes() {
-        return clientes;
-    }
-
-    public void setClientes(List<Cliente> clientes) {
-        this.clientes = clientes;
-    }
 
     public Long getId() {
         return id;
@@ -56,7 +53,6 @@ public class Usuarios {
         this.id = id;
     }
 
-
     public String getNombre() {
         return nombre;
     }
@@ -64,7 +60,6 @@ public class Usuarios {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
 
     public String getCorreo() {
         return correo;
@@ -90,6 +85,29 @@ public class Usuarios {
         this.estado = estado;
     }
 
+    public Usuarios getAsesor() {
+        return asesor;
+    }
+
+    public void setAsesor(Usuarios asesor) {
+        this.asesor = asesor;
+    }
+
+    public List<Contratos> getContratos() {
+        return contratos;
+    }
+
+    public void setContratos(List<Contratos> contratos) {
+        this.contratos = contratos;
+    }
+
+    public Cartera getCartera() {
+        return cartera;
+    }
+
+    public void setCartera(Cartera cartera) {
+        this.cartera = cartera;
+    }
 
     public List<Roles> getRol() {
         return rol;
@@ -97,13 +115,5 @@ public class Usuarios {
 
     public void setRol(List<Roles> rol) {
         this.rol = rol;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

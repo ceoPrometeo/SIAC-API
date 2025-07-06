@@ -1,8 +1,11 @@
-package org.example.siecapi.models.contratos;
+package org.example.siecapi.models.cliente;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ContratosRepository extends JpaRepository<Contratos,Long> {
+public interface ClienteRepository extends JpaRepository<Cliente, Long> {
+
+
+
 }
