@@ -1,5 +1,6 @@
 package org.example.siecapi.services.Token;
 
+import jakarta.servlet.http.HttpSession;
 import org.example.siecapi.config.ApiResponse;
 import org.example.siecapi.controllers.User.dto.AsesorDto;
 import org.example.siecapi.controllers.User.dto.LoginDto;
@@ -42,9 +43,10 @@ public class TokenService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private HttpSession session;
 
     public Usuarios asesorDtoMapeado(AsesorDto dto) {
-        // Obtener o crear el rol ASESOR
         Roles rol = rolesRepository.findByRol("ASESOR").orElseGet(() -> {
             Roles nuevoRol = new Roles();
             nuevoRol.setRol("ASESOR");
@@ -61,7 +63,6 @@ public class TokenService {
 
         return usuario;
     }
-
 
     public ResponseEntity<ApiResponse> crearAsesor(AsesorDto dto) {
         try {
@@ -95,41 +96,37 @@ public class TokenService {
         }
     }
 
-
     public ResponseEntity<?> login(LoginDto dto) {
-        try{
-            // Buscar el usuario
+        try {
             Usuarios user = usuariosRepository.findByCorreo(dto.getCorreo())
                     .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
-            // Validar contraseña
             if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas");
             }
 
-            // Autenticar en el contexto de Spring Security
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(dto.getCorreo(), dto.getPassword())
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // Generar token JWT
             String token = jwtTokenProvider.generateToken(authentication);
 
-            // Obtener el primer rol
             String rol = user.getRol().stream()
                     .map(Roles::getRol)
                     .findFirst()
                     .orElse("SIN_ROL");
 
-            // Devolver respuesta
+            // ✅ Aquí guardamos el objeto usuario completo en la sesión
+            session.setAttribute("usuario", user);
+
             return ResponseEntity.ok(Map.of(
                     "token", token,
                     "rol", rol,
                     "email", user.getCorreo()
             ));
-        }catch (Exception e){
+        } catch (Exception e) {
             ApiResponse response = new ApiResponse(
                     null,
                     true,
@@ -137,26 +134,22 @@ public class TokenService {
             );
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-
     }
-    public ApiResponse crearSuperUsuario (SuperUserDto superUserDto){
+
+    public ApiResponse crearSuperUsuario(SuperUserDto superUserDto) {
         try {
-
-
-            Usuarios user = new Usuarios();
             if (usuariosRepository.findByCorreo(superUserDto.getCorreo()).isPresent()) {
-                ApiResponse response = new ApiResponse(
+                return new ApiResponse(
                         null,
                         HttpStatus.LOCKED,
                         "El correo " + superUserDto.getCorreo() + " ya existe"
                 );
-                return response;
             }
 
+            Usuarios user = new Usuarios();
             user.setCorreo(superUserDto.getCorreo());
             user.setPassword(passwordEncoder.encode(superUserDto.getPassword()));
             user.setEstado(true);
-            user.setNombre("Enrique");
 
             Roles rol = rolesRepository.findByRol("SUPERUSUARIO").orElseGet(() -> {
                 Roles nuevoRol = new Roles();
@@ -168,21 +161,18 @@ public class TokenService {
 
             Usuarios response = usuariosRepository.save(user);
 
-
-            ApiResponse apiresponse = new ApiResponse(
+            return new ApiResponse(
                     response,
                     HttpStatus.OK,
-                    "SuperUsuarioCreado Correctamente"
+                    "SuperUsuario creado correctamente"
             );
 
-            return apiresponse;
-        }catch (Exception e){
-            ApiResponse apiresponse = new ApiResponse(
+        } catch (Exception e) {
+            return new ApiResponse(
                     e.getMessage(),
-                    HttpStatus.OK,
+                    HttpStatus.INTERNAL_SERVER_ERROR,
                     "SuperUsuario no pudo ser creado correctamente"
             );
-            return apiresponse;
         }
     }
 

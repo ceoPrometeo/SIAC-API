@@ -26,7 +26,7 @@ public class Usuarios {
     @JoinColumn(name = "clientes")
     private List<Cliente> clientes;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "Usuarios_Roles", // tabla intermedia
             joinColumns = @JoinColumn(name = "usuario_id"),

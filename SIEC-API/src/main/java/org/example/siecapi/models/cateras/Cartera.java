@@ -17,10 +17,12 @@ public class Cartera {
     private Double monto;
     @ManyToOne
     @JoinColumn(name = "cliente", nullable = false)
+
     private Cliente cliente;
     @ManyToOne
     @JoinColumn(name="usuario")
     private Usuarios usuario;
+    //agregar aquí un triger que cuando un cliente haga otro contrato se le aumente a la carte en el monto con el que serealizo dicho contrato.
 
 
     public Usuarios getUsuario() {

@@ -1,11 +1,13 @@
 package org.example.siecapi.models.cliente;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.example.siecapi.models.cateras.Cartera;
 import org.example.siecapi.models.contratos.Contratos;
 import org.example.siecapi.models.usuarios.Roles.Roles;
 import org.example.siecapi.models.usuarios.Usuarios;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,35 +16,39 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "Nombre", nullable = true, length = 100)
+    @Column(name = "Nombre", nullable = true)
     private String nombre;
-    @Column(name = "Correo", nullable = true, length = 40)
+    @Column(name = "Correo", nullable = true)
     private String correo;
-    @Column(name = "Telefono", nullable = true, length = 10)
+    @Column(name = "Telefono", nullable = true)
     private String telefono;
     @Column(name = "Estado", nullable = true)
     private boolean estado;
     @ManyToOne
     @JoinColumn(name = "asesor")
     private Usuarios asesor;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "contratos_cliente", // tabla intermedia
             joinColumns = @JoinColumn(name = "cliente_id"),
             inverseJoinColumns = @JoinColumn(name = "contrato_id")
     )
-    private List<Contratos> contratos;
+    @JsonIgnore
+    private List<Contratos> contratos = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "cartera")
+    @JsonIgnore
+
     private Cartera cartera;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "Usuarios_Roles", // tabla intermedia
-            joinColumns = @JoinColumn(name = "usuario_id"),
+            name = "clientes_Roles", // tabla intermedia
+            joinColumns = @JoinColumn(name = "cliente_id"),
             inverseJoinColumns = @JoinColumn(name = "rol_id")
     )
+    @JsonIgnore
     private List<Roles> rol;
 
     public Long getId() {
@@ -69,8 +75,8 @@ public class Cliente {
         this.correo = correo;
     }
 
-    public String getTelefono() {
-        return telefono;
+    public String getTelefono(String telefono) {
+        return this.telefono;
     }
 
     public void setTelefono(String telefono) {
@@ -115,5 +121,9 @@ public class Cliente {
 
     public void setRol(List<Roles> rol) {
         this.rol = rol;
+    }
+
+    public String getTelefono() {
+        return telefono;
     }
 }

@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/usuario/")
 public class UsuarioController {
 
-    @Autowired
-    private UsuarioService usuarioService;
-    @Autowired
-    private HikariDataSource dataSource;
+
     @Autowired
     private TokenService tokenService;
 

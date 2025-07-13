@@ -1,5 +1,7 @@
 package org.example.siecapi.models.contratos;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.example.siecapi.models.cliente.Cliente;
 import org.example.siecapi.models.usuarios.Usuarios;
@@ -12,22 +14,36 @@ public class Contratos {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "cuentaMT5", nullable = false)
+    @Column(name = "cuentaMT5", nullable = true)
     private String cuentaMT5;
-    @Column(name = "monto", nullable = false)
+    @Column(name = "monto", nullable = true)
     private Double monto;
-    @Column(name = "fecha_inicio", nullable = false)
+    @Column(name = "fecha_inicio", nullable = true)
     private LocalDate fecha_inicio;
-    @Column(name = "fecha_renovacion", nullable = false)
-    private LocalDate fecha_renovacion;
-    @Column(name = "estatus_renovacion", nullable = false)
-    private boolean estatus_renovacion;
+    @Column(name = "fecha_renovacion", nullable = true)
+    private LocalDate fechaRenovacion;
+    //renovado,pendiente y vencidos.
+    @Column(name = "estatus_renovacion", nullable = true)
+    private String estatusRenovacion;
+    //agresivo, moderado, conservador y liquidity
+    @Column(name = "tipo_contrato" , nullable = true, length = 20)
+    private String tipoContrato;
     @ManyToOne
     @JoinColumn(name = "cliente")
+    @JsonIgnore
     private Cliente cliente;
     @ManyToOne
     @JoinColumn(name = "asesor")
+    @JsonIgnore
     private Usuarios usuario;
+
+    public String getTipoContrato() {
+        return tipoContrato;
+    }
+
+    public void setTipoContrato(String tipoContrato) {
+        this.tipoContrato = tipoContrato;
+    }
 
     public Long getId() {
         return id;
@@ -61,20 +77,20 @@ public class Contratos {
         this.fecha_inicio = fecha_inicio;
     }
 
-    public LocalDate getFecha_renovacion() {
-        return fecha_renovacion;
+    public LocalDate getFechaRenovacion() {
+        return fechaRenovacion;
     }
 
-    public void setFecha_renovacion(LocalDate fecha_renovacion) {
-        this.fecha_renovacion = fecha_renovacion;
+    public void setFechaRenovacion(LocalDate fechaRenovacion) {
+        this.fechaRenovacion = fechaRenovacion;
     }
 
-    public boolean isEstatus_renovacion() {
-        return estatus_renovacion;
+    public String getEstatusRenovacion() {
+        return estatusRenovacion;
     }
 
-    public void setEstatus_renovacion(boolean estatus_renovacion) {
-        this.estatus_renovacion = estatus_renovacion;
+    public void setEstatusRenovacion(String estatusRenovacion) {
+        this.estatusRenovacion = estatusRenovacion;
     }
 
     public Cliente getCliente() {

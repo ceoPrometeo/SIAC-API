@@ -62,7 +62,10 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/api/cliente").hasAnyAuthority("SUPERUSUARIO","ASESOR")
+                .requestMatchers("/api/login").permitAll()
+                .requestMatchers("/api/usuario/crearSuperUsuario").permitAll()
+                .requestMatchers("/api/usuario/crearAsesor").permitAll()
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -75,7 +78,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:5173/",
+                "http://localhost:5174/"
+
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

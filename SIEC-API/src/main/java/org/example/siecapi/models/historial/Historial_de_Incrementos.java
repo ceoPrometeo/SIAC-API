@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "Historial_de_Incremento")
-public class HistorialContratos {
+public class Historial_de_Incrementos {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

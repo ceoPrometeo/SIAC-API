@@ -3,7 +3,7 @@ package org.example.siecapi.models.usuarios.Roles;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "Rol")
+@Table(name = "roles")
 public class Roles {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
